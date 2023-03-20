@@ -6,7 +6,7 @@ required_packages:
   - ntp
   - chrony
   - aide
-  - iptables-persistent
+  # - iptables-persistent
   - unattended-upgrades
 
 # Example configuration settings
