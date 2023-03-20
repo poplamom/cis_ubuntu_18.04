@@ -1,0 +1,7 @@
+---
+- name: Uninstall unnecessary packages
+  apt:
+    name: "{{ item }}"
+    state: absent
+  loop: "{{ packages_to_remove }}"
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '18'
