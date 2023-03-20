@@ -1,4 +1,5 @@
 ---
+#main
 - name: CIS Ubuntu Linux 18.04 LTS Benchmark v2.1.0
   hosts: localhost
   become: yes

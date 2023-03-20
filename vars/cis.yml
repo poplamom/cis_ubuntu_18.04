@@ -1,5 +1,6 @@
 ---
 is_ubuntu_18: "{{ ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '18' }}"
+disable_wireless_interfaces: true
 required_packages:
   - libpam-pwquality
   - auditd
