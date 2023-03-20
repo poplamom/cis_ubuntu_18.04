@@ -235,3 +235,23 @@
     update_cache: yes
   when: is_ubuntu_18
   tags: ["cis_1.9"]
+
+- name: Ensure time synchronization is in use (cis_2.1.1.1)
+  block:
+    - name: Check if NTP is installed
+      package_facts:
+        manager: auto
+      register: ntp_installed
+
+    - name: Check if chrony is installed
+      package_facts:
+        manager: auto
+      register: chrony_installed
+
+    - name: Ensure NTP or chrony is installed
+      assert:
+        that:
+          - "'ntp' in ntp_installed.ansible_facts.packages or 'chrony' in chrony_installed.ansible_facts.packages"
+        fail_msg: "Neither NTP nor chrony is installed. Please install one of them for time synchronization."
+  when: is_ubuntu_18
+  tags: ["cis_2.1.1.1"]
