@@ -1,0 +1,35 @@
+---
+- name: CIS Ubuntu Linux 18.04 LTS Benchmark v2.1.0
+  hosts: all
+  become: yes
+  gather_facts: yes
+  vars_files:
+    - "vars/cis.yml"
+
+  tasks:
+    - name: Install required packages
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ required_packages }}"
+
+    - name: Configure audit rules
+      include_tasks: tasks/audit_rules.yml
+
+    - name: Basic system settings
+      include_tasks: tasks/basic_system_settings.yml
+
+    - name: Services
+      include_tasks: tasks/services.yml
+
+    - name: Network configurations
+      include_tasks: tasks/network_configurations.yml
+
+    - name: Logging and auditing
+      include_tasks: tasks/logging_and_auditing.yml
+
+    - name: Access, authentication, and authorization
+      include_tasks: tasks/access_authentication_authorization.yml
+
+    - name: System maintenance
+      include_tasks: tasks/system_maintenance.yml
