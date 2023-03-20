@@ -134,3 +134,12 @@
     mode: "0644"
   when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18" and not aide_cron_exists.stat.exists
   tags: ["cis_1.3.2"]
+
+- name: Ensure permissions on bootloader config (cis_1.4.1)
+  file:
+    path: /boot/grub/grub.cfg
+    owner: root
+    group: root
+    mode: "0400"
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
+  tags: ["cis_1.4.1"]
