@@ -135,11 +135,20 @@
   when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18" and not aide_cron_exists.stat.exists
   tags: ["cis_1.3.2"]
 
-- name: Ensure permissions on bootloader config (cis_1.4.1)
+- name: Ensure permissions on bootloader config (cis_1.4.1, cis_1.4.3)
   file:
     path: /boot/grub/grub.cfg
     owner: root
     group: root
     mode: "0400"
   when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
-  tags: ["cis_1.4.1"]
+  tags: ["cis_1.4.1", "cis_1.4.3"]
+
+- name: Ensure authentication required for single user mode (cis_1.4.4)
+  lineinfile:
+    path: /etc/systemd/system/rescue.service
+    line: 'ExecStart=-/bin/sh -c "/sbin/sulogin; /usr/bin/systemctl --fail --no-block default"'
+    insertafter: "ExecStart="
+    state: present
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
+  tags: ["cis_1.4.4"]
