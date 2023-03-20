@@ -1,0 +1,5 @@
+- name: Ensure minimum password length is set
+  lineinfile:
+    path: /etc/pam.d/common-password
+    regexp: "^password\\s+requisite\\s+pam_pwquality\\.so"
+    line: "password requisite pam_pwquality.so minlen={{ password_min_length }}"

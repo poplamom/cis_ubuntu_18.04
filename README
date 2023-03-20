@@ -1,0 +1,17 @@
+cis_ubuntu_18.04/
+│
+├── inventory.ini                        # Inventory file containing target hosts
+│
+├── cis_ubuntu_18.04.yml                 # Main playbook file
+│
+├── vars/
+│   └── cis.yml                          # Variables file containing package lists and other configuration details
+│
+└── tasks/
+    ├── audit_rules.yml                  # Tasks for audit rules configuration
+    ├── basic_system_settings.yml        # Tasks for basic system settings
+    ├── services.yml                     # Tasks for services configuration
+    ├── network_configurations.yml       # Tasks for network configurations
+    ├── logging_and_auditing.yml         # Tasks for logging and auditing
+    ├── access_authentication_authorization.yml    # Tasks for access, authentication, and authorization
+    └── system_maintenance.yml           # Tasks for system maintenance

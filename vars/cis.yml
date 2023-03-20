@@ -1,0 +1,16 @@
+---
+required_packages:
+  - libpam-pwquality
+  - auditd
+  - audispd-plugins
+  - ntp
+  - chrony
+  - aide
+  - iptables-persistent
+  - unattended-upgrades
+
+# Example configuration settings
+password_min_length: 14
+password_reuse_limit: 5
+aide_cron_config: "/etc/cron.d/aide"
+# Additional settings can be added here as needed
