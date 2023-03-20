@@ -66,6 +66,23 @@
   when: is_ubuntu_18
   tags: ["cis_1.1.23"]
 
+- name: Disable USB Storage (cis_1.1.24)
+  block:
+    - name: Create /etc/modprobe.d/usb_storage.conf
+      ansible.builtin.copy:
+        dest: /etc/modprobe.d/usb_storage.conf
+        content: "install usb-storage /bin/true"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Disable USB Storage in kernel
+      ansible.builtin.modprobe:
+        name: usb-storage
+        state: absent
+  when: is_ubuntu_18
+  tags: ["cis_1.1.24"]
+
 - name: Check if USB storage module is loaded (cis_1.1.24)
   command: lsmod | grep '^usb_storage '
   register: usb_storage_loaded
