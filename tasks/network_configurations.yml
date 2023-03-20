@@ -85,7 +85,7 @@
     state: present
   with_items:
     - /etc/sysctl.conf
-    - /etc/sysctl.d/*.conf
+    # - /etc/sysctl.d/*.conf
     - /usr/lib/sysctl.d/*.conf
     - /run/sysctl.d/*.conf
   notify: reload sysctl
@@ -103,3 +103,27 @@
   become: true
   meta: flush_handlers
   tags: cis_3.2.2
+
+- name: Disable source routed packets
+  sysctl:
+    name: "{{ item }}"
+    value: 0
+    state: present
+    sysctl_set: yes
+    reload: yes
+  loop:
+    - net.ipv4.conf.all.accept_source_route
+    - net.ipv4.conf.default.accept_source_route
+    - net.ipv6.conf.all.accept_source_route
+    - net.ipv6.conf.default.accept_source_route
+  when: is_ubuntu_18
+
+- name: Add sysctl.conf file for source routed packets
+  copy:
+    src: templates/sysctl.conf.source-routed.j2
+    dest: /etc/sysctl.d/99-cis.conf
+    owner: root
+    group: root
+    mode: 0644
+  when: is_ubuntu_18
+  tags: cis_3.3.1
