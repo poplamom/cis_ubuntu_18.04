@@ -58,3 +58,48 @@
     - "sysctl -w net.ipv4.route.flush=1"
   tags:
     - cis_3.2.1
+
+- name: Ensure IP forwarding is disabled
+  become: true
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    sysctl_file: "{{ item.file }}"
+    state: present
+    reload: yes
+  with_items:
+    - { name: "net.ipv4.ip_forward", value: "0", file: "/etc/sysctl.conf" }
+    - {
+        name: "net.ipv4.ip_forward",
+        value: "0",
+        file: "/etc/sysctl.d/99-cis.conf",
+      }
+  tags: cis_3.2.2
+
+- name: Remove existing IP forwarding configuration
+  become: true
+  lineinfile:
+    path: "{{ item }}"
+    regexp: '^net\.ipv4\.ip_forward\s*=\s*1.*'
+    line: "# *REMOVED* net.ipv4.ip_forward=1"
+    state: present
+  with_items:
+    - /etc/sysctl.conf
+    - /etc/sysctl.d/*.conf
+    - /usr/lib/sysctl.d/*.conf
+    - /run/sysctl.d/*.conf
+  notify: reload sysctl
+  tags: cis_3.2.2
+
+- name: Set IP forwarding kernel parameter
+  become: true
+  sysctl:
+    name: net.ipv4.route.flush
+    value: "1"
+    state: present
+  tags: cis_3.2.2
+
+- name: Reload sysctl configuration
+  become: true
+  meta: flush_handlers
+  tags: cis_3.2.2
