@@ -435,3 +435,51 @@
       "cis_2.1.16",
       "cis_2.1.17",
     ]
+
+- name: Ensure certain client packages are not installed (cis_2.2.1-2.2.6)
+  block:
+    - name: Ensure NIS Client is not installed
+      ansible.builtin.apt:
+        name: nis,nisplus
+        state: absent
+      when: is_ubuntu_18
+
+    - name: Ensure rsh client is not installed
+      ansible.builtin.apt:
+        name: rsh-client
+        state: absent
+      when: is_ubuntu_18
+
+    - name: Ensure talk client is not installed
+      ansible.builtin.apt:
+        name: talk
+        state: absent
+      when: is_ubuntu_18
+
+    - name: Ensure telnet client is not installed
+      ansible.builtin.apt:
+        name: telnet
+        state: absent
+      when: is_ubuntu_18
+
+    - name: Ensure LDAP client is not installed
+      ansible.builtin.apt:
+        name: libpam-ldapd,ldap-utils
+        state: absent
+      when: is_ubuntu_18
+
+    - name: Ensure RPC is not installed
+      ansible.builtin.apt:
+        name: rpcbind
+        state: absent
+      when: is_ubuntu_18
+
+  tags:
+    [
+      "cis_2.2.1",
+      "cis_2.2.2",
+      "cis_2.2.3",
+      "cis_2.2.4",
+      "cis_2.2.5",
+      "cis_2.2.6",
+    ]
