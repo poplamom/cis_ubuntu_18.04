@@ -93,26 +93,26 @@
   when: is_ubuntu_18
   tags: ["cis_1.1.24"]
 
-- name: Install AIDE (cis_1.3.1)
-  apt:
-    name: aide
-    state: present
-  when: is_ubuntu_18
-  tags: ["cis_1.3.1"]
+# - name: Install AIDE (cis_1.3.1)
+#   apt:
+#     name: aide
+#     state: present
+#   when: is_ubuntu_18
+#   tags: ["cis_1.3.1"]
 
-- name: Initialize AIDE database (cis_1.3.1)
-  command: aideinit
-  args:
-    creates: /var/lib/aide/aide.db.new.gz
-  when: is_ubuntu_18
-  tags: ["cis_1.3.1"]
+# - name: Initialize AIDE database (cis_1.3.1)
+#   command: aideinit
+#   args:
+#     creates: /var/lib/aide/aide.db.new.gz
+#   when: is_ubuntu_18
+#   tags: ["cis_1.3.1"]
 
-- name: Rename AIDE database (cis_1.3.1)
-  command: mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
-  args:
-    removes: /var/lib/aide/aide.db.new.gz
-  when: is_ubuntu_18
-  tags: ["cis_1.3.1"]
+# - name: Rename AIDE database (cis_1.3.1)
+#   command: mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
+#   args:
+#     removes: /var/lib/aide/aide.db.new.gz
+#   when: is_ubuntu_18
+#   tags: ["cis_1.3.1"]
 
 - name: Check if AIDE CRON job exists (cis_1.3.2)
   stat:
@@ -255,3 +255,46 @@
         fail_msg: "Neither NTP nor chrony is installed. Please install one of them for time synchronization."
   when: is_ubuntu_18
   tags: ["cis_2.1.1.1"]
+
+- name: Ensure systemd-timesyncd is configured (cis_2.1.1.2)
+  lineinfile:
+    path: /etc/systemd/timesyncd.conf
+    regexp: "^NTP="
+    line: "NTP=your_ntp_server"
+    state: present
+  when: is_ubuntu_18
+  tags: ["cis_2.1.1.2"]
+
+- name: Ensure chrony is configured (cis_2.1.1.3)
+  block:
+    - name: Configure chrony
+      lineinfile:
+        path: /etc/chrony/chrony.conf
+        regexp: "^server"
+        line: "server your_ntp_server iburst"
+        state: present
+
+    - name: Restart chrony service
+      ansible.builtin.systemd:
+        name: chrony
+        state: restarted
+        daemon_reload: yes
+  when: is_ubuntu_18 and ('chrony' in ansible_facts.packages)
+  tags: ["cis_2.1.1.3"]
+
+- name: Ensure ntp is configured (cis_2.1.1.4)
+  block:
+    - name: Configure ntp
+      lineinfile:
+        path: /etc/ntp.conf
+        regexp: "^server"
+        line: "server your_ntp_server iburst"
+        state: present
+
+    - name: Restart ntp service
+      ansible.builtin.systemd:
+        name: ntp
+        state: restarted
+        daemon_reload: yes
+  when: is_ubuntu_18 and ('ntp' in ansible_facts.packages)
+  tags: ["cis_2.1.1.4"]
