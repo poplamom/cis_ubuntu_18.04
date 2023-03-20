@@ -186,3 +186,50 @@
     state: present
   when: is_ubuntu_18
   tags: ["cis_1.7.1"]
+
+- name: Ensure permissions on /etc/issue.net are configured (cis_1.7.2)
+  ansible.builtin.file:
+    path: /etc/issue.net
+    owner: root
+    group: root
+    mode: "0644"
+  when: is_ubuntu_18
+  tags: ["cis_1.7.2"]
+
+- name: Ensure permissions on /etc/issue are configured (cis_1.7.3)
+  ansible.builtin.file:
+    path: /etc/issue
+    owner: root
+    group: root
+    mode: "0644"
+  when: is_ubuntu_18
+  tags: ["cis_1.7.3"]
+
+- name: Ensure permissions on /etc/motd are configured (cis_1.7.4)
+  ansible.builtin.file:
+    path: /etc/motd
+    owner: root
+    group: root
+    mode: "0644"
+  when: is_ubuntu_18
+  tags: ["cis_1.7.4"]
+
+- name: Ensure remote login warning banner is configured properly (cis_1.7.5)
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^Banner"
+    line: "Banner /etc/issue.net"
+    state: present
+  when: is_ubuntu_18
+  tags: ["cis_1.7.5"]
+
+- name: Ensure local login warning banner is configured properly (cis_1.7.6)
+  copy:
+    dest: /etc/pam.d/login
+    content: |
+      # Display the message of the day upon successful login.
+      session    optional   pam_motd.so  motd=/run/motd.dynamic noupdate
+      session    optional   pam_motd.so  motd=/etc/motd
+    force: yes
+  when: is_ubuntu_18
+  tags: ["cis_1.7.6"]
