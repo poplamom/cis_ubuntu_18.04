@@ -86,8 +86,8 @@
   with_items:
     - /etc/sysctl.conf
     # - /etc/sysctl.d/*.conf
-    - /usr/lib/sysctl.d/*.conf
-    - /run/sysctl.d/*.conf
+    # - /usr/lib/sysctl.d/*.conf
+    # - /run/sysctl.d/*.conf
   notify: reload sysctl
   tags: cis_3.2.2
 
