@@ -62,13 +62,13 @@
     state: stopped
     enabled: no
   register: automount_status
-  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
+  # when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
   tags: ["cis_1.1.23"]
 
 - name: Display message if automounting was disabled (cis_1.1.23)
   debug:
     msg: "Automounting was disabled."
-  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18" and automount_status.changed
+  # when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18" and automount_status.changed
   tags: ["cis_1.1.23"]
 
 - name: Check if USB storage module is loaded (cis_1.1.24)
@@ -76,12 +76,12 @@
   register: usb_storage_loaded
   changed_when: false
   failed_when: false
-  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
+  # when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
   tags: ["cis_1.1.24"]
 
 - name: Unload USB storage module if loaded (cis_1.1.24)
   command: rmmod usb_storage
-  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18" and usb_storage_loaded.rc == 0
+  # when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18" and usb_storage_loaded.rc == 0
   tags: ["cis_1.1.24"]
 
 - name: Add USB storage module to blacklist (cis_1.1.24)
@@ -90,30 +90,30 @@
     line: "blacklist usb_storage"
     create: yes
     state: present
-  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
+  # when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
   tags: ["cis_1.1.24"]
 
 - name: Update initramfs (cis_1.1.24)
   command: update-initramfs -u
-  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
+  # when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
   tags: ["cis_1.1.24"]
 - name: Install AIDE (cis_1.3.1)
   apt:
     name: aide
     state: present
-  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
+  # when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
   tags: ["cis_1.3.1"]
 
 - name: Initialize AIDE database (cis_1.3.1)
   command: aideinit
   args:
     creates: /var/lib/aide/aide.db.new.gz
-  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
+  # when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
   tags: ["cis_1.3.1"]
 
 - name: Rename AIDE database (cis_1.3.1)
   command: mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
   args:
     removes: /var/lib/aide/aide.db.new.gz
-  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
+  # when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
   tags: ["cis_1.3.1"]
