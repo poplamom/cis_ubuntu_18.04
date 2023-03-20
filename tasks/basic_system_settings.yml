@@ -1,11 +1,6 @@
 ---
 # tasks/basic_system_settings.yml
 
-- name: Ensure updates, patches, and additional security software are installed
-  apt:
-    upgrade: safe
-    update_cache: yes
-
 - name: Disable unused filesystems
   block:
     - name: Disable mounting of cramfs filesystem
@@ -233,3 +228,10 @@
     force: yes
   when: is_ubuntu_18
   tags: ["cis_1.7.6"]
+
+- name: Ensure updates, patches, and additional security software are installed (cis_1.9)
+  apt:
+    upgrade: safe
+    update_cache: yes
+  when: is_ubuntu_18
+  tags: ["cis_1.9"]
