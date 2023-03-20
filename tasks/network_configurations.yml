@@ -18,3 +18,19 @@
     reload: yes
   when: is_ubuntu_18 and disable_wireless_interfaces
   tags: cis_3.1.2
+
+- name: Disable sending of packet redirects
+  command: sysctl -n net.ipv4.conf.all.send_redirects
+  register: packet_redirects_status
+  changed_when: false
+  failed_when: false
+  check_mode: no
+
+- name: Set packet redirects to 0
+  sysctl:
+    name: net.ipv4.conf.all.send_redirects
+    value: "0"
+    state: present
+    sysctl_file: "{{ sysctl_conf }}"
+  when: packet_redirects_status.stdout == "1"
+  tags: cis_3.2.1
