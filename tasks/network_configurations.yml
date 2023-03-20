@@ -136,12 +136,15 @@
 - name: Ensure secure ICMP redirects are not accepted
   sysctl:
     name: "{{ item }}"
-    value: "{{ lookup('env', item) }}"
+    value: "0"
     state: present
+    sysctl_set: yes
     reload: yes
-  with_items:
+  loop:
     - net.ipv4.conf.all.secure_redirects
     - net.ipv4.conf.default.secure_redirects
+    - net.ipv6.conf.all.accept_redirects
+    - net.ipv6.conf.default.accept_redirects
     - net.ipv4.route.flush
   when: is_ubuntu_18
   tags: cis_3.3.3
