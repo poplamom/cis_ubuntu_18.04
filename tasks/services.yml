@@ -4,4 +4,4 @@
     name: "{{ item }}"
     state: absent
   loop: "{{ packages_to_remove }}"
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '18'
+  when: is_ubuntu_18
