@@ -6,6 +6,7 @@ required_packages:
   - ntp
   - chrony
   - aide
+  - autofs
   # - iptables-persistent
   - unattended-upgrades
 
