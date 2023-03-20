@@ -26,11 +26,35 @@
   failed_when: false
   check_mode: no
 
-- name: Set packet redirects to 0
+- name: Disable packet redirect sending
   sysctl:
-    name: net.ipv4.conf.all.send_redirects
-    value: "0"
+    name: "{{ item }}"
+    value: 0
     state: present
-    sysctl_file: "{{ sysctl_conf }}"
-  when: packet_redirects_status.stdout == "1"
-  tags: cis_3.2.1
+    sysctl_set: true
+    reload: yes
+  with_items:
+    - net.ipv4.conf.all.send_redirects
+    - net.ipv4.conf.default.send_redirects
+  tags:
+    - cis_3.2.1
+
+- name: Set kernel parameters for packet redirect sending
+  lineinfile:
+    path: /etc/sysctl.conf
+    line: "{{ item }}"
+    state: present
+  with_items:
+    - "net.ipv4.conf.all.send_redirects = 0"
+    - "net.ipv4.conf.default.send_redirects = 0"
+  tags:
+    - cis_3.2.1
+
+- name: Set active kernel parameters for packet redirect sending
+  shell: "{{ item }}"
+  with_items:
+    - "sysctl -w net.ipv4.conf.all.send_redirects=0"
+    - "sysctl -w net.ipv4.conf.default.send_redirects=0"
+    - "sysctl -w net.ipv4.route.flush=1"
+  tags:
+    - cis_3.2.1
