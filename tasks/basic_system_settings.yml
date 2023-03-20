@@ -148,6 +148,55 @@
   when: is_ubuntu_18 and not aide_cron_exists.stat.exists
   tags: ["cis_1.3.2"]
 
+- name: Ensure filesystem integrity is regularly checked (cis_1.3.2)
+  block:
+    - name: Create /etc/systemd/system/aidecheck.service
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/aidecheck.service
+        content: |
+          [Unit]
+          Description=Aide Check
+          [Service]
+          Type=simple
+          ExecStart=/usr/bin/aide.wrapper --config /etc/aide/aide.conf --check
+          [Install]
+          WantedBy=multi-user.target
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Create /etc/systemd/system/aidecheck.timer
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/aidecheck.timer
+        content: |
+          [Unit]
+          Description=Aide check every day at 5AM
+          [Timer]
+          OnCalendar=*-*-* 05:00:00
+          Unit=aidecheck.service
+          [Install]
+          WantedBy=multi-user.target
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Reload systemd daemon
+      ansible.builtin.systemd:
+        daemon_reload: yes
+
+    - name: Enable aidecheck.service
+      ansible.builtin.systemd:
+        name: aidecheck.service
+        enabled: yes
+
+    - name: Enable and start aidecheck.timer
+      ansible.builtin.systemd:
+        name: aidecheck.timer
+        enabled: yes
+        state: started
+  when: is_ubuntu_18
+  tags: ["cis_1.3.2"]
+
 - name: Ensure permissions on bootloader config (cis_1.4.1, cis_1.4.3)
   file:
     path: /boot/grub/grub.cfg
