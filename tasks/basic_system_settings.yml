@@ -152,3 +152,26 @@
     state: present
   when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
   tags: ["cis_1.4.4"]
+- name: Check if ASLR is enabled (cis_1.5.2)
+  command: sysctl kernel.randomize_va_space
+  register: aslr_enabled
+  changed_when: false
+  when: is_ubuntu_18
+  tags: ["cis_1.5.2"]
+
+- name: Enable ASLR (cis_1.5.2)
+  sysctl:
+    name: kernel.randomize_va_space
+    value: "2"
+    state: present
+    reload: yes
+  when: is_ubuntu_18 and aslr_enabled.stdout.find("kernel.randomize_va_space = 2") == -1
+  tags: ["cis_1.5.2"]
+
+- name: Ensure ASLR setting persists across reboots (cis_1.5.2)
+  lineinfile:
+    path: /etc/sysctl.conf
+    line: "kernel.randomize_va_space = 2"
+    state: present
+  when: is_ubuntu_18
+  tags: ["cis_1.5.2"]
