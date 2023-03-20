@@ -197,14 +197,30 @@
   when: is_ubuntu_18
   tags: ["cis_1.3.2"]
 
-- name: Ensure permissions on bootloader config (cis_1.4.1, cis_1.4.3)
-  file:
-    path: /boot/grub/grub.cfg
-    owner: root
-    group: root
-    mode: "0400"
+- name: Ensure permissions on bootloader config are not overridden (cis_1.4.1)
+  block:
+    - name: Set the correct chmod command in /usr/sbin/grub-mkconfig
+      ansible.builtin.command:
+        cmd: "sed -ri 's/chmod\\s+[0-7][0-7][0-7]\\s+\\$\\{grub_cfg\\}\\.new/chmod 400 \\${grub_cfg}.new/' /usr/sbin/grub-mkconfig"
+      args:
+        warn: false
+      register: sed_chmod_result
+      changed_when: '"1" in sed_chmod_result.stdout_lines'
+
+    - name: Remove grep condition from /usr/sbin/grub-mkconfig
+      ansible.builtin.command:
+        cmd: "sed -ri 's/ && ! grep \"\\^password\" \\$\\{grub_cfg\\}.new >\\/dev\\/null//' /usr/sbin/grub-mkconfig"
+      args:
+        warn: false
+      register: sed_grep_result
+      changed_when: '"1" in sed_grep_result.stdout_lines'
+
+    - name: Display sed results
+      ansible.builtin.debug:
+        msg: "Modified /usr/sbin/grub-mkconfig"
+      when: '"1" in sed_chmod_result.stdout_lines or "1" in sed_grep_result.stdout_lines'
   when: is_ubuntu_18
-  tags: ["cis_1.4.1", "cis_1.4.3"]
+  tags: ["cis_1.4.1"]
 
 - name: Ensure authentication required for single user mode (cis_1.4.4)
   lineinfile:
