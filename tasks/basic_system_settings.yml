@@ -70,3 +70,30 @@
     msg: "Automounting was disabled."
   when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18" and automount_status.changed
   tags: ["cis_1.1.23"]
+
+- name: Check if USB storage module is loaded (cis_1.1.24)
+  command: lsmod | grep '^usb_storage '
+  register: usb_storage_loaded
+  changed_when: false
+  failed_when: false
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
+  tags: ["cis_1.1.24"]
+
+- name: Unload USB storage module if loaded (cis_1.1.24)
+  command: rmmod usb_storage
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18" and usb_storage_loaded.rc == 0
+  tags: ["cis_1.1.24"]
+
+- name: Add USB storage module to blacklist (cis_1.1.24)
+  lineinfile:
+    path: /etc/modprobe.d/blacklist.conf
+    line: "blacklist usb_storage"
+    create: yes
+    state: present
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
+  tags: ["cis_1.1.24"]
+
+- name: Update initramfs (cis_1.1.24)
+  command: update-initramfs -u
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
+  tags: ["cis_1.1.24"]
