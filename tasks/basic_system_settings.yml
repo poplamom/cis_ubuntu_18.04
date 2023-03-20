@@ -6,11 +6,6 @@
     upgrade: safe
     update_cache: yes
 
----
-# tasks/basic_system_settings.yml
-
-# ...
-
 - name: Disable unused filesystems
   block:
     - name: Disable mounting of cramfs filesystem
