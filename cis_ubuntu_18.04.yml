@@ -1,6 +1,6 @@
 ---
 - name: CIS Ubuntu Linux 18.04 LTS Benchmark v2.1.0
-  hosts: all
+  hosts: localhost
   become: yes
   gather_facts: yes
   vars_files:
