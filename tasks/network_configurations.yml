@@ -162,11 +162,14 @@
   when: is_ubuntu_18
 
 - name: Ensure suspicious packets are logged
-  copy:
-    dest: /etc/rsyslog.d/99-suspicious.conf
-    src: templates/99-suspicious.conf.j2
-    mode: "0640"
-  notify: restart rsyslog
+  sysctl:
+    name: "{{ item }}"
+    value: "{{ sysctl_settings[item] }}"
+    state: present
+  loop:
+    - net.ipv4.conf.all.log_martians
+    - net.ipv4.conf.default.log_martians
+  become: true
   tags: cis_3.3.4
 
 - name: Set net.ipv4.icmp_echo_ignore_broadcasts
