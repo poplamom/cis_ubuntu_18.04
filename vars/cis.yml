@@ -34,6 +34,7 @@ packages_to_remove:
   - snmpd
   - net-snmp
   - rsync
+  - telnet
 
 # Example configuration settings
 password_min_length: 14
