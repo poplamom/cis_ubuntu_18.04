@@ -44,6 +44,7 @@ aide_cron_config: "/etc/cron.d/aide"
 # Additional settings can be added here as needed
 
 ubtu18cis_tmp_fstab_options: "defaults,rw,nosuid,nodev,noexec,relatime"
+ubtu18cis_shm_fstab_options: "defaults,noexec,nodev,nosuid,seclabel"
 ubtu18cis_vartmp:
   source: /tmp
   fstype: none
