@@ -3,5 +3,6 @@
   apt:
     name: "{{ item }}"
     state: absent
+    purge: true
   loop: "{{ packages_to_remove }}"
   when: is_ubuntu_18
